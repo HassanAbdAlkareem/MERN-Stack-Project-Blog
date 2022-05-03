@@ -5,7 +5,6 @@ import imgUser from "../../images/user.png";
 
 const Topbar = () => {
   const { user, setUser } = UseGlobelContext();
-
   const [isScrolled, setIsScrolled] = useState(false);
 
   window.onscroll = () => {
@@ -22,7 +21,7 @@ const Topbar = () => {
   return (
     <div className={isScrolled ? "top scrolled" : "top"}>
       <div className="top-left">
-        <p className="username">{user ? user.username : "welcome"}</p>
+        <p className="username">{user ? user.user.username : "welcome"}</p>
       </div>
 
       <div className="top-center">
@@ -48,13 +47,19 @@ const Topbar = () => {
       <div className="top-right">
         {user ? (
           <Link to="/settings">
-            {user.profilePic ? (
-              <img src={PF + user.profilePic} alt="" className="img-profile" />
+            {user.user.profilePic ? (
+              <img
+                src={PF + user.user.profilePic}
+                alt=""
+                className="img-profile"
+              />
             ) : (
               <img src={imgUser} alt="" className="img-profile" />
             )}
           </Link>
-        ) : null}
+        ) : (
+          <img src={imgUser} alt="" className="img-profile" />
+        )}
       </div>
     </div>
   );

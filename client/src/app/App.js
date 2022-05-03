@@ -11,6 +11,7 @@ import SideBar from "../components/cmp-home/SideBar";
 import { UseGlobelContext } from "../context/FunctionAlContext";
 
 function App() {
+  console.log("render");
   const { user } = UseGlobelContext();
   return (
     <Router>

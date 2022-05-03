@@ -799,7 +799,7 @@ ul {
 .register form > input {
   border: 1px solid teal;
   background-color: white;
-  padding: 8px;
+  padding: 12px;
   border-radius: 4px;
   margin-bottom: 10px;
 }

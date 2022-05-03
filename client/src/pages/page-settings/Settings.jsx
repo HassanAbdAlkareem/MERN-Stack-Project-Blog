@@ -21,7 +21,6 @@ const Settings = () => {
     setSuccess(false);
     e.preventDefault();
     const updateUser = {
-      userId: user._id,
       username,
       password,
       email,
@@ -41,14 +40,15 @@ const Settings = () => {
         console.log(error);
       }
     }
-    if (username === "" && password === "" && email === "" && file === null) {
+    if (username === "" && password === "" && email === "") {
       setError(true);
     } else {
       try {
-        const res = await axios.put("/users/" + user._id, updateUser);
+        const res = await axios.put("/users/" + user.user._id, updateUser, {
+          headers: { auth: user.token },
+        });
         setUser(res.data);
         setSuccess(true);
-        //
       } catch (error) {
         console.log(error.message);
         setSuccess(false);
@@ -59,8 +59,8 @@ const Settings = () => {
   const handleDelete = async () => {
     setDeleteAccount(false);
     try {
-      await axios.delete("/users/" + user._id, {
-        data: { userId: user._id },
+      await axios.delete("/users/" + user.user._id, {
+        headers: { auth: user.token },
       });
       setUser(null);
       window.location.replace("/register");
@@ -80,8 +80,8 @@ const Settings = () => {
           <div className="img">
             {file ? (
               <img src={URL.createObjectURL(file)} />
-            ) : user.profilePic ? (
-              <img src={PF + user.profilePic} />
+            ) : user.user.profilePic ? (
+              <img src={PF + user.user.profilePic} />
             ) : (
               <img src={imgUser} />
             )}
@@ -101,13 +101,13 @@ const Settings = () => {
             type="text"
             name="username"
             id="username"
-            placeholder={user.username}
+            placeholder={user.user.username}
             onChange={(e) => setUsername(e.target.value)}
           />
 
           <label htmlFor="email">Email</label>
           <input
-            placeholder={user.email}
+            placeholder={user.user.email}
             type="text"
             name="email"
             id="email"
@@ -125,7 +125,7 @@ const Settings = () => {
           {error && (
             <p className="update-error">You must enter the information!</p>
           )}
-          {succsess && <p className="update-success">Updated Successful</p>}
+          {succsess && <p className="update-success">Updated Successfull</p>}
           <div className="buttons">
             <button type="submit">Update </button>
             <button

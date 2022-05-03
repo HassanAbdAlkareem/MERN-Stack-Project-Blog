@@ -14,9 +14,8 @@ const SinglePost = ({ singlePost }) => {
   const handleDelete = async () => {
     try {
       await axios.delete("/posts/" + singlePost._id, {
-        data: {
-          username: user.username,
-        },
+        data: { username: user.user.username },
+        headers: { auth: user.token },
       });
       window.location.replace("/");
     } catch (error) {
@@ -26,16 +25,19 @@ const SinglePost = ({ singlePost }) => {
 
   const handelUpdate = async () => {
     try {
-      await axios.put("/posts/" + singlePost._id, {
-        username: user.username,
-        title: title,
-        desc: desc,
-      });
+      await axios.put(
+        "/posts/" + singlePost._id,
+        { title, desc },
+        {
+          headers: { auth: user.token },
+        }
+      );
       window.location.reload();
     } catch (error) {
       console.log(error);
     }
   };
+
   return (
     <div className="single-post">
       <div className="wrapper">
@@ -62,7 +64,7 @@ const SinglePost = ({ singlePost }) => {
             <div className="description">
               <div className="flex-title">
                 <span>Title</span>
-                {singlePost.username === user.username && (
+                {singlePost.username === user.user.username && (
                   <div className="edit">
                     <i
                       className="fas fa-edit"

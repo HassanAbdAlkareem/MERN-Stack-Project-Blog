@@ -3,42 +3,39 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const verifyToken = require("../middleware/verifyToken");
 const Post = require("../models/Post");
+const jwt = require("jsonwebtoken");
 
 //update
-router.put("/:id", async (req, res) => {
-  if (req.body.userId === req.params.id) {
-    if (req.body.password) {
-      const salt = await bcrypt.genSalt(10);
-      req.body.password = await bcrypt.hash(req.body.password, salt);
-    }
-    try {
-      const updatedUser = await User.findByIdAndUpdate(
-        req.params.id,
-        {
-          $set: req.body,
-        },
-        { new: true }
-      );
-      res.status(200).send(updatedUser);
-    } catch (error) {
-      res.status(400).send(error.message);
-    }
-  } else {
-    res.status(401).json("You can update only your account!");
+router.put("/:id", verifyToken, async (req, res) => {
+  if (req.body.password) {
+    const salt = await bcrypt.genSalt(10);
+    req.body.password = await bcrypt.hash(req.body.password, salt);
+  }
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: req.body,
+      },
+      { new: true }
+    );
+    const generateToken = jwt.sign({ id: updatedUser._id }, "PrivateKey");
+    res.status(200).json({
+      user: updatedUser,
+      token: generateToken,
+    });
+  } catch (error) {
+    res.status(400).send(error.message);
   }
 });
 
-router.delete("/:id", async (req, res) => {
-  if (req.params.id === req.body.userId) {
-    const user = await User.findById(req.params.id);
-    try {
-      await User.findByIdAndDelete(req.params.id);
-      await Post.deleteMany({ username: user.username });
-      res.status(200).send("user and posts has been deleted");
-    } catch (error) {
-      res.status(401).send("you can delete only your account");
-    }
-  } else {
+router.delete("/:id", verifyToken, async (req, res) => {
+  const user = await User.findById(req.params.id);
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    await Post.deleteMany(user);
+    res.status(200).send("user and posts has been deleted");
+  } catch (error) {
     res.status(401).send("you can delete only your account");
   }
 });

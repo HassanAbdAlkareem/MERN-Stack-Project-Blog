@@ -34,10 +34,20 @@ const Login = () => {
         <span>Login</span>
         <form onSubmit={handleSubmit}>
           <label htmlFor="username">username</label>
-          <input type="text" id="username" ref={userRef} />
+          <input
+            type="text"
+            id="username"
+            ref={userRef}
+            placeholder="usernmae"
+          />
 
           <label htmlFor="password">Password</label>
-          <input type="password" id="password" ref={passwordRef} />
+          <input
+            type="password"
+            id="password"
+            ref={passwordRef}
+            placeholder="password"
+          />
 
           <button className="login-button" type="submit">
             Login
